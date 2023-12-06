@@ -8,8 +8,14 @@
     <h1 class="mb-5">{{ $project->name }} <a class="btn btn-warning ms-3" href="{{ route('admin.projects.edit', $project) }}"><i class="fa-solid fa-pencil"></i></a></h1>
 
     @if($project->type)
-        <p>Tipologia: <strong>{{ $project->type->name }}</strong></p>
+        <p>Tipologia: <strong>{{ $project->type?->name }}</strong></p>
     @endif
+
+    @forelse($project->technologies as $technology)
+        <span class="badge text-bg-info">{{ $technology->name }}</span>
+    @empty
+    <span class="badge text-bg-warning">Non ci sono tecnologie</span>
+    @endforelse
 
     <div class="card mb-3" style="width: 80vw;">
         <div class="row">

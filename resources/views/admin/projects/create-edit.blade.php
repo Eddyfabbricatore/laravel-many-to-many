@@ -65,6 +65,27 @@
             </div>
 
             <div class="col-3 mb-3">
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    @foreach($technologies as $technology)
+                        <input
+                          type="checkbox"
+                          class="btn-check"
+                          id="technology_{{ $technology->id }}"
+                          autocomplete="off"
+                          name="technologies[]"
+                          value="{{ $technology->id }}"
+                          @if($errors->any() && in_array($technology->id, old('technologies', [])))
+                            checked
+                          @elseif(!$errors->any() && $project->technologies->contains($technology))
+                            checked
+                          @endif
+                        >
+                        <label class="btn btn-outline-primary" for="technology_{{ $technology->id }}">{{ $technology->name }}</label>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="col-3 mb-3">
                 <label class="form-label" for="name">Data Progetto</label>
                 <input class="form-control @error('date') is-invalid @enderror" type="text" id="date" name="date" value="{{ old('date', $project?->date) }}">
                 @error('date')

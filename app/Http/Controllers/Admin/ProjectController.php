@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Type;
+use App\Models\Technology;
 use App\Http\Requests\ProjectRequest;
 use App\Functions\Helper;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +32,8 @@ class ProjectController extends Controller
         $route = route('admin.projects.store');
         $project = null;
         $types = Type::all();
-        return view('admin.projects.create-edit', compact('title', 'method', 'route', 'project', 'types'));
+        $technologies = Technology::all();
+        return view('admin.projects.create-edit', compact('title', 'method', 'route', 'project', 'types', 'technologies'));
     }
 
     /**
@@ -52,6 +54,12 @@ class ProjectController extends Controller
         }
 
         $new_project = Project::create($form_data);
+
+        // se trovo tecnologie significa che sono stati selezionate tecnologie
+        // questa operazione si fa dopo aver salvato il nuovo elemento
+        if(array_key_exists('technologies', $form_data)){
+            $new_project->technologies()->attach($form_data['technologies']);
+        }
 
         return redirect()->route('admin.projects.show', $new_project);
     }
@@ -75,7 +83,8 @@ class ProjectController extends Controller
         $method = 'PUT';
         $route = route('admin.projects.update', $project);
         $types = Type::all();
-        return view('admin.projects.create-edit', compact('title', 'method', 'route', 'project', 'types'));
+        $technologies = Technology::all();
+        return view('admin.projects.create-edit', compact('title', 'method', 'route', 'project', 'types', 'technologies'));
     }
 
     /**
@@ -108,6 +117,15 @@ class ProjectController extends Controller
         $form_data['date'] = date('Y-m-d');
 
         $project->update($form_data);
+
+        if(array_key_exists('technologies', $form_data)){
+            // aggiorno le relazioni tra i progetti e le tecnologie eliminando eventualmente quelle che sono state tolte e aggiungendo quelle nuove
+            // sync accetta un array creando tutte le relazioni tra i progetti e le tecnologie ed eliminando le eventuali relazioni che sono state tolte
+            $project->technologies->sync($form_data['technologies']);
+        }else{
+            // elimino tutte le relazioni
+            $project->technologies->detach();
+        }
 
         return redirect()->route('admin.projects.show', $project);
     }

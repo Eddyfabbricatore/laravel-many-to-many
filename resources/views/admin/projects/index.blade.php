@@ -14,6 +14,7 @@
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Tipologia</th>
+                <th scope="col">Tecnologia</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Data Progetto</th>
                 <th scope="col">Azioni</th>
@@ -29,6 +30,13 @@
                 <tr>
                     <td>{{ $project->id }}</td>
                     <td>{{ $project->type?->name ?? '-' }}</td>
+                    <td>
+                        @forelse($project->technologies as $technology)
+                            <a class="badge text-bg-info text-decoration-none" href="{{ route('admin.project-technology', $technology) }}">{{ $technology->name }}</a>
+                        @empty
+                            -
+                        @endforelse
+                    </td>
                     <td>{{ $project->name }}</td>
                     <td>{{ date_format($date, 'd/m/Y') }}</td>
                     <td class="d-flex">

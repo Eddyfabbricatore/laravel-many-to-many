@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -15,6 +14,11 @@ class Project extends Model
     // A questa funzione accederò come proprietà della classe Project
     public function type(){
         return $this->belongsTo(Type::class);
+    }
+
+    // relazione many to many con la tabella technologies
+    public function technologies(){
+        return $this->belongsToMany(Technology::class);
     }
 
     protected $fillable = [
